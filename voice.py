@@ -16,6 +16,7 @@ def speak(audio):
 def capture_voice_input ():
     with sr.Microphone() as source:
         print("Listening...")
+        recognizer.adjust_for_ambient_noise(source)
         audio = recognizer.listen(source)
     return audio
 

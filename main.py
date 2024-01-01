@@ -1,5 +1,4 @@
 import voice
-import Dbconnect
 import cv2
 import os
 import datetime
@@ -7,6 +6,13 @@ import datetime
 months = ["january", "february", "march", "april", "may", "june","july", "august", "september","october", "november", "december"]
 days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 dayExt = ["rd", "th", "st", "nd"]
+
+import sqlite3
+try:
+    con = sqlite3.connect("directory.db")
+    cur = con.cursor()
+except sqlite3.Error as error:
+    print("Error for database", error)
 
 wake_word = "hello fridge"
 
@@ -33,9 +39,9 @@ def getDate(dateText):
     year = today.year
 
     if "today" in dateText: #today
-            date = datetime.date.today()
+        date = datetime.date.today()
 
-    elif "tommorrow" in dateText: #tommorrow
+    elif "tomorrow" in dateText: #tomorrow
         date = datetime.date.today() + datetime.timedelta(days=1)
 
     else:
@@ -88,6 +94,7 @@ def getDate(dateText):
 
 def expDate():
     ###sql select, process into human form language, return result
+    print("coming soon")
     return None
 
 def insertFood():
@@ -108,6 +115,11 @@ def insertFood():
     voice.speak("What's the name of the food?")
     audio = voice.capture_voice_input()
     name = voice.convert_voice_to_text(audio)
+    if name == "":
+        voice.speak("sorry, an error has occur, please try again")
+        return None
+    else:
+        voice.speak("Alright, food's name "+name+" is noted")
 
     #ask for date 
 
@@ -116,10 +128,23 @@ def insertFood():
     dateText = voice.convert_voice_to_text(audio)
     dateText = dateText.lower()
     date = getDate(dateText)
+    voice.speak("Alright, food's date "+date+" is noted")
+
+    #ask for quantity
+    voice.speak("What's the quantity of the food?")
+    audio = voice.capture_voice_input()
+    quantity = voice.convert_voice_to_text(audio)
+    quantity = int(quantity)
+
+    if bool(quantity):
+        voice.speak("sorry, an error has occur, please try again")
+        return None
+    else:
+        voice.speak("Alright, food's quantity "+quantity+" is noted")
 
     #insert
+    cur.execute("INSERT INTO DIRECTORY (FoodName, FoodExpDate, FoodPhoto, FoodQuantity) VALUES ("+name+","+date+","+image+","+quantity+")")
 
-    
     #ask for name and date, insert, return insert success
 
 
