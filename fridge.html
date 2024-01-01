@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>Smart Fridge: Food Directory System</title>
+
+
+ <style>
+  /*color can be changed later*/
+  body { 
+        background-color: #F0FFFF;
+  }
+
+  h1 { 
+      background-color: #ADD8E6;
+      color: #080808;
+      font-family: Arial, sans-serif;
+      font-variant: small-caps;
+      max-width: 100%;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 0px;
+      margin-bottom: 50px;
+      padding: 20px;
+  }
+
+  #searchbar { }
+
+  .button { 
+           background-color: #
+  }
+
+  table, th, td { 
+                 border: 1px solid black;
+  }
+
+  .div1 { 
+         background-color: white;
+         width: 30%;
+         height: 40%;
+         border: 1px solid black;
+         padding: 20px;
+         margin-left: auto;
+         margin-right: auto;
+}
+  .box { }
+ </style>
+
+
+
+
+
+</head>
+
+<body>
+ <h1>Food Directory System</h1>
+
+ <div class="div1">
+  <form 
+   method="POST" 
+   action="https://script.google.com/macros/s/AKfycbxSPok2WzdqBuPmzgYx5dXK863Cf8si2C4gcNXdy_eK3anMzwRXg0bIoIoQ9wmyzGQj/exec"
+   >
+
+  <div>
+    <label>Food:</label><br>
+    <input type="radio" name="Food" class="box" id="vege" value="Vegetables" required>
+    <label for="vege">Vegetables</label>
+    <br>
+    <input type="radio" name="Food" class="box" id="meat" value="Meats" required>
+    <label for="meat">Meats</label>
+    <br>
+    <input type="radio" name="Food" class="box" id="egg" value="Eggs" required>
+    <label for="egg">Eggs</label>
+    <br>
+      <div>
+        <input type="radio" name="Food" class="box" id="other" value="Other" required>
+        <label for="other">Others:</label>
+        <input name="OtherFood" class="box" type="food" placeholder="Others">
+      </div>
+  </div>
+
+   <br>
+   <label>Date Added:</label>
+   <input name="Date Added" class="box" type="date_added" placeholder="DD-MM-YYYY" required>
+   <br>
+   <br>
+   <label>Quantity:</label>
+   <input name="Quantity" class="box" type="quantity" placeholder="Quantity" required>
+   <br>
+   <br>
+   <button type="submit">Add</button>
+  </form>
+
+ </div>
+ <br>
+ <br>
+
+ <div>
+  <button>Select</button>
+  <button>Delete</button>
+  <button>Add</button>
+ </div>
+<br>
+
+ <div>
+  <form>
+   <input type="text" id="searchbar" placeholder="Search...">
+   <button type="submit" class="button">Submit</button>
+  </form>
+ </div>
+
+ <div>
+  <table style="width:80%">
+   <tr>
+    <th style="width:5%">No.</th>
+    <th>Item</th>
+    <th>Date Added</th>
+    <th>Expiry Date</th>
+    <th>Actions</th>
+   </tr>
+
+   <tr>
+    <td>1</td>
+    <td>To be Added...</td>
+    <td>To be Added...</td>
+    <td>To be Added...</td>
+    <td>
+      <button>Details</button>
+      <button>Delete</button>
+    </td>
+   </tr>
+  </table>
+ </div>
+
+
+
+
+
+
+
+ <script>
+//for add button: once clciked, new item with details is added
+
+//for select button: once clicked, items can be selected
+//selected items can be deleted
+//delete option will appear once select button is clicked
+//or if cannot, display delete button on main page
+//for delete button: once clicked, items can be deleted
+
+//for details button: once clicked, a window displayed in the website is pop up and show the details of food item
+//details: name, date added, expired date, photo
+
+
+
+
+
+
+
+
+
+
+ </scirpt>
+
+
+
+
+</body>
+</html>
+
+
+
