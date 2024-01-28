@@ -65,12 +65,14 @@
                 </div>
             </div>
         </div>
-        <div>
-            <input type="text" id="searchTerm" placeholder="Type something...">
-            <!---maybe need to change-->
-            <button type="submit" class="btn btn-primary" onclick="searchInventory()"><i class="fa fa-search" aria-hidden="true"></i></button>
-            <button type="submit" class="btn btn-primary" onclick="displayAllData()">Display All Data</button>
-            <button class="btn btn-primary" id="addButton" onclick="return openAddFoodModal()">Add</button>
+        <div class="container-fluid">
+            <div class="row">
+                <input class="col form-control" type="text" id="searchTerm" placeholder="Type something...">
+                <!---maybe need to change-->
+                <button type="submit" class="col btn btn-primary" onclick="searchInventory()"><i class="fa fa-search" aria-hidden="true"></i></button>
+                <button type="submit" class="col btn btn-primary" onclick="displayAllData()">Display All Data</button>
+                <button class="col btn btn-primary" id="addButton" onclick="return openAddFoodModal()">Add</button>
+            </div>
         </div>
         <div id="searchResults">
             <table id="resultsTable"></table>
