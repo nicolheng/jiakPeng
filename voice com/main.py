@@ -3,8 +3,9 @@ import datetime
 from pydub import AudioSegment
 from pydub.playback import play
 from insertFood import *
-
+from os import remove
 import sqlite3
+
 try:
     con = sqlite3.connect("directory.db")
     cur = con.cursor()
@@ -13,6 +14,7 @@ except sqlite3.Error as error:
 
 wake_word = "hello fridge"
 today = datetime.date.today()
+month = {"01":"January", "02":"February", "03":"March", "04":"April", "05":"May", "06":"June", "07":"July", "08":"August", "09":"September","10":"October", "11":"November", "12":"December"}
 
 def insertFood():
 
@@ -61,19 +63,27 @@ def insertFood():
     cur.execute("INSERT INTO DIRECTORY (foodName, foodExpDate, foodPhoto, foodQuantity, foodAddDate) VALUES(?,?,?,?,?)",(name,date,image,quantity,today))
     con.commit()
     voice.speak("Insert success. You can check the record in our web app")
+    remove("temp.png")
 
 def expDate():
     #sql select, process into human form language, return result
     today = datetime.date.today()
-    period = today + datetime.timedelta(days=7)
+    end = today + datetime.timedelta(days=7)
+    print(today,end)
 
-    for row in cur.execute("SELECT foodQuantity, foodName, foodExpDate FROM DIRECTORY WHERE foodExpDate<="+period+" ORDER BY foodExpDate DESC Limit 1"):
+    foodList = cur.execute("""SELECT foodQuantity, foodName, foodExpDate FROM DIRECTORY 
+                        WHERE CAST(strftime('%s', foodExpDate)AS integer) BETWEEN CAST(strftime('%s',?)AS integer) AND CAST(strftime('%s',?)as integer)  
+                        ORDER BY strftime('%s',foodExpDate) ASC""",(today,end))
+    for row in foodList:
         quantity = row[0]
         name = row[1]
         date = row[2]
-        diff = date - today
+        dateList = date.split("-")
+        dateText = dateList[2]+" "+month[dateList[1]]+" "+dateList[0]
 
-        text = str(quantity, name,"is expiring in", diff,"days")
+        text = str(quantity)+" "+name+" is expiring on "+dateText
+        text = str(text)
+        print(text)
         voice.speak(text)
 
     voice.speak("That's all. Please check the food directory for more detail")
