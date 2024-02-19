@@ -31,7 +31,7 @@
                         <button id="close-btn" class="btn-close" title="Close" onclick="closeModal('overlay1','')"><i class="fa fa-times"></i></button>
                     </div>
 
-                    <form id="addItemForm" method="post" enctype="multipart/form-data"> <!--return addItem()"-->
+                    <form name="addItem" method="post" enctype="multipart/form-data" onsubmit="return addValidation()">
 
                         <div class="modal-body">
                                 <div class="row">
@@ -134,33 +134,33 @@
                         <tbody id="name">
                             {%for i in range(0,len)%}
 
-                                <div class="modal shadow" id="{{data[i][0]}}"> <!--add item modal-->
+                                <div class="modal shadow" id="{{data[i][0]}}"> <!--view item modal-->
                                     <div class="modal-dialog modal-xl">
                                         <div class="modal-content">
 
                                             
 
-                                            <div class="modal-header d-flex justify-content-center">
+                                            <div class="modal-header d-flex justify-content-center"> <!--header-->
                                                 <div class="fs-5">{{data[i][1]}}</div>
                                                 <button id="close-btn" title="Close" onclick="closeModal('{{data[i][0]}}')"><i class="fa fa-times"></i></button>
                                             </div>
                                             
-                                            <form method="post">
+                                            <form method="post" name="modifyItem">
 
-                                                <div class="modal-body container">
+                                                <div class="modal-body container"> <!--content-->
 
-                                                    <div class="row justify-content-center">
+                                                    <div class="row justify-content-center"> <!--pic-->
                                                         <img class="mb-3 rounded" src="{{ url_for('static',filename=showPic(data[i][5],data[i][0]))}}" alt="{{data[i][1]}}" width="320px" height="240px">
                                                     </div>
 
                                                         <div class="row">
                                                         
-                                                            <div class="col">
+                                                            <div class="col"> <!--name-->
                                                                 <label for="foodName">Name</label>
                                                                 <input type="text" class="form-control mb-3" value="{{data[i][1]}}" name="foodName" required>
                                                             </div>
             
-                                                            <div class="col">
+                                                            <div class="col"> <!--quantity-->
                                                                 <label for="foodQauntity">Quantity</label>
                                                                 <input type="number" class="form-control mb-3" value="{{data[i][2]}}" name="foodQuantity" required>
                                                             </div>
@@ -169,12 +169,12 @@
             
                                                         <div class="row">
             
-                                                            <div class="col">
+                                                            <div class="col"> <!--exp date-->
                                                                 <label for="foodExpDate">Expiry Date</label>
                                                                 <input type="date" class="form-control mb-3" value="{{date_filter(data[i][3])}}" name="foodExpDate" required>
                                                             </div>
             
-                                                            <div class="col">
+                                                            <div class="col"> <!--date added-->
                                                                 <label for="foodAddDate">Date Added</label>
                                                                 <input type="date" class="form-control mb-3" value="{{date_filter(data[i][4])}}" name="foodAddDate" disabled required>
                                                             </div>
@@ -183,9 +183,9 @@
                                                         
                                                 </div>
                                                 
-                                                <div class="modal-footer justify-content-between">
+                                                <div class="modal-footer justify-content-between"> <!--footer-->
                                                     <button type="submit" name="action" class="btn btn-outline-danger" value="delete" onclick="return confirm('Do you really want to delete this data?');">Delete</button>
-                                                    <button type="submit" name="action" class="btn btn-primary" value="modify">Save Change</button>
+                                                    <button type="submit" name="action" class="btn btn-primary" value="modify" onclick="return modifyValidation()">Save Change</button>
                                                 </div>
 
                                             </form>

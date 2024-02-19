@@ -1,5 +1,5 @@
 function openModal(id,itemName) {
-  // Get the addfood-modal element
+  // Get the modal element
   var modal = document.getElementById(id,itemName);
 
   // Show the modal by changing its display style
@@ -29,90 +29,60 @@ function closeModal(id) {
   return false;
 }
 
-// Function to add an item
-function addItem() {
-  // Get item details from the form
-  var itemName = document.getElementById('itemName').value;
-  var dateAdded = document.getElementById('dateAdded').value;
-  var expiryDate = document.getElementById('expiryDate').value;
-  var quantity = document.getElementById('quantity').value;
+function addValidation(){
 
-  // Get values from the new dropdowns
-  var typeOfFood = document.getElementById('typeOfFood').value;
-  var typeOfStorage = document.getElementById('typeOfStorage').value;
+  let a = document.forms["addItem"]["foodQuantity"].value;
+    if (a <= 0) {
+      alert("The quantity of the food must be more than 0.")
+      return false;
+    }
+  let x = new Date(document.forms["addItem"]["foodExpDate"].value);
+    if ( isNaN(x)) {
+        alert("Please insert the expiry date.");
+      return false;
+    }
+    
+    var now = new Date();
+    if (x < now) {
+      alert("The expiry date cannot be in the past!")
+      return false;
+    }
 
-  // Check if the reminder has already been shown
-  if (!reminderAlreadyShown) {
-      // Display the reminder below the Type of Storage dropdown
-      displayReminder(typeOfFood, typeOfStorage);
+  let y = document.forms["addItem"]["foodPhoto"].value;
+    if (y == "") {
+      alert("Please upload the photo of the food.");
+      return false;
+    }
+    if (y && y['type'].split('/')[0] != 'image') {
+      alert("Please make sure the file is an image.")
+      return false;
+    }
+
+}
+
+function modifyValidation(){
+
+  let a = document.forms["modifyItem"]["foodQuantity"].value;
+    if (a <= 0) {
+      alert("The quantity of the food must be more than 0.")
+      return false;
+    }
+  let x = new Date(document.forms["modifyItem"]["foodExpDate"].value);
+    if ( isNaN(x)) {
+        alert("Please insert the expiry date.");
+      return false;
+    }
+    
+    var now = new Date();
+    if (x < now) {
+      alert("The expiry date cannot be in the past!")
+      return false;
+    }
+
+  if(!(confirm("Do you really want to modify the data?"))){
+    return false;
   }
 
-  // Check if the expiry date is earlier than the date added
-  if (new Date(expiryDate) < new Date(dateAdded)) {
-      // Show an alert and do not proceed with adding the item
-      alert('Expiry date cannot be earlier than the date added. Please enter a valid expiry date.');
-      return;
-  }
-
-  // Check if the item is recommended to store in the freezer
-  if (typeOfStorage === 'Freezer' && (typeOfFood === 'Vegetables' || typeOfFood === 'Fruits' || typeOfFood === 'Dairy Products')) {
-      // Show confirmation dialog
-      var confirmation = showFreezerConfirmation();
-
-      if (!confirmation) {
-          // User clicked Cancel, do not proceed with adding the item
-          return;
-      }
-  } else if (expiryDate) {
-      // If expiryDate is provided, show a confirmation dialog
-      var useRecommendedDays = showExpiryDateConfirmation();
-
-      if (useRecommendedDays) {
-          // Adjust the expiry date based on the recommended days
-          expiryDate = adjustExpiryDate(typeOfFood, typeOfStorage, dateAdded);
-          reminderAlreadyShown = true; // Set the flag to true after showing the reminder
-      }
-  }
-
-  // Handle file upload
-  var fileInput = document.getElementById('file');
-  var foodImage = fileInput.files[0];
-
-  // Create FormData to send the file and other form data
-  var formData = new FormData();
-  formData.append('foodImage', foodImage);
-  formData.append('itemName', itemName);
-  formData.append('dateAdded', dateAdded);
-  formData.append('expiryDate', expiryDate);
-  formData.append('quantity', quantity);
-  formData.append('typeOfFood', typeOfFood);
-  formData.append('typeOfStorage', typeOfStorage);
-
-  // Include file data in the fetch request
-  fetch('save_item.php', {
-      method: 'POST',
-      body: formData,
-  })
-  .then(response => response.json())
-  // Inside the fetch response handling
-  .then(data => {
-      if (data.status === 'success') {
-          // Item added successfully
-          alert(data.message);
-          // Display the uploaded image
-          displayImage(data.imagePath);
-          // Display the generated itemId in the console
-          console.log('Generated itemId:', data.itemId);
-          // Clear the form using the clearForm function
-          clearForm();
-      } else {
-          // Error occurred, show alert with the error message
-          alert(data.message);
-      }
-  })
-  .catch(error => {
-      console.error('Error adding item:', error);
-  });
 }
 
 // Function to display the uploaded image immediately
@@ -146,8 +116,6 @@ function cancelImageUpload() {
   uploadedImage.style.display = 'none';
 }
 
-
-
 // Function to display the uploaded image
 function displayImage(imagePath) {
   // Assuming you have an element with ID "uploadedImage" where you want to show the image
@@ -176,12 +144,4 @@ function displayImage(imagePath) {
 
   // Update the "uploadedImage" reference to the new image
   uploadedImage = img;
-}
-
-// Function to clear the form after successful item addition
-function clearForm() {
-  document.getElementById('addItemForm').reset();
-  document.getElementById('uploadedImage').src = '';
-  document.getElementById('uploadedImage').style.display = 'none';
-  reminderAlreadyShown = false; // Reset the reminder flag
 }
