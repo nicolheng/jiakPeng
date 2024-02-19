@@ -2,24 +2,21 @@ from flask import *
 import sqlite3
 import cv2
 import datetime
-from PIL import Image, ImageTk
-from io import BytesIO
+import numpy as np
 
 app = Flask(__name__)
-try:
-    con = sqlite3.connect("directory.db")
-    cur = con.cursor()
-except sqlite3.Error as error:
-    print("Error for database", error)
     
 @app.route('/')
 def index(): 
-    connect = sqlite3.connect('directory.db') 
-    cursor = connect.cursor() 
-    cursor.execute('SELECT foodID, foodName, foodQuantity, foodExpDate, foodAddDate, foodPhoto FROM DIRECTORY ORDER BY CASE WHEN strftime("%s",foodExpDate) < strftime("%s",DATE()) then 1 else 0 END,  strftime("%s",foodExpDate) ASC') 
+    try:
+        con = sqlite3.connect("directory.db")
+        cur = con.cursor()
+    except sqlite3.Error as error:
+        print("Error for database", error)
+    cur.execute('SELECT foodID, foodName, foodQuantity, foodExpDate, foodAddDate, foodPhoto FROM DIRECTORY ORDER BY CASE WHEN strftime("%s",foodExpDate) < strftime("%s",DATE()) then 1 else 0 END,  strftime("%s",foodExpDate) ASC') 
     
     dateCheck = datetime.date.today() + datetime.timedelta(days=7)
-    data = cursor.fetchall() 
+    data = cur.fetchall() 
     return render_template("index.html",len=len(data), data=data, dateCheck = dateCheck, date_filter = date_filter, tdy = datetime.date.today(), showPic = showPic)
 
 def date_filter(s):
@@ -38,23 +35,49 @@ def add_item():
         name = request.form["foodName"]
         date = request.form["foodExpDate"]
         quantity = request.form["foodQuantity"]
-        foodPhoto = request.form["foodPhoto"]
+        image = request.files["foodPhoto"]
+        imageBlob = image.read()
+        try:
+            con = sqlite3.connect("directory.db")
+            cur = con.cursor()
+        except sqlite3.Error as error:
+            print("Error for database", error)
+        #insert
+        cur.execute("INSERT INTO DIRECTORY (foodName, foodExpDate, foodPhoto, foodQuantity, foodAddDate) VALUES(?,?,?,?,?)",(name,date,imageBlob,quantity,today))
+        con.commit()
 
-        #convert pic to blob
-        cv2.imwrite("temp.png",foodPhoto)
-        with open(foodPhoto, 'rb') as file:
-            image = file.read()
+        flash('Insert Success!')
+    return redirect('/')
+
+@app.route('/<int:id>',methods=["POST"])
+def action(id):
+    action = request.form["action"]
+    if action == "delete":
+
         try:
             con = sqlite3.connect("directory.db")
             cur = con.cursor()
         except sqlite3.Error as error:
             print("Error for database", error)
 
-        #insert
-        cur.execute("INSERT INTO DIRECTORY (foodName, foodExpDate, foodPhoto, foodQuantity, foodAddDate) VALUES(?,?,?,?,?)",(name,date,image,quantity,today))
+        name = request.form["foodName"]
+        cur.execute("DELETE FROM DIRECTORY where foodID = %d" %id)
         con.commit()
+        flash(name+" is deleted successfully")
+    else:
 
-        flash('Insert Success!')
+        try:
+            con = sqlite3.connect("directory.db")
+            cur = con.cursor()
+        except sqlite3.Error as error:
+            print("Error for database", error)
+        
+        name = request.form["foodName"]
+        quantity = request.form["foodQuantity"]
+        expDate = request.form["foodExpDate"]
+        cur.execute("UPDATE DIRECTORY SET foodName= ?, foodQuantity = ?, foodExpDate = ? where foodID = %d" %id, (name,quantity,expDate))
+        con.commit()
+        flash(name+" is modified successfully")
     return redirect('/')
 
 
