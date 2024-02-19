@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <script src="{{ url_for('static',filename='code.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    
+    <title>Smart Fridge: Food Directory System</title>
+    
+</head>
+<body>
+
+    <div class="navbar border-bottom border-3 bg-white d-flex justify-content-center shadow-lg p-3"> <!--header-->
+        <div class="navbar-brand fs-1 text-dark">Smart Fridge: Food Directory System</div>
+    </div>
+
+
+    <div class="modal shadow" id="overlay1"> <!--add item modal-->
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <div class="modal-header d-flex justify-content-center">
+                    <div></div>
+                    <div class="fs-3">Add Food</div>
+                    <button id="close-btn" class="btn-close" title="Close" onclick="closeModal('overlay1','')"><i class="fa fa-times"></i></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="addItemForm" method="post"> <!--return addItem()"-->
+                        <div class="row">
+                            <div class="col">
+                                <label for="itemName">Item Name:</label>
+                                <input type="text" class="form-control mb-3 text-center" name="foodName" required>
+                            </div>
+                            <div class="col">
+                                <label for="expiryDate">Expiry Date:</label>
+                                    <input type="date" class="form-control mb-3 text-center text-uppercase" name="foodExpDate">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="quantity">Quantity:</label>
+                                <input type="number" class="form-control mb-3 text-center" name="FoodQuantity" required>
+                            </div>
+                            <div class="col">
+                                <label for="file">Upload Image:</label>
+                                <input class="form-control mb-3 text-center" type="file" id="foodPhoto" accept="image/*" onchange="displayImageImmediately()">
+                                <div id="imageDisplay">
+                                    <img id="uploadedImage" alt="Uploaded Image" style="display: none; max-width: 100%; height: auto; margin: 10px 0;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col"></div>
+                            <div class="col"><button type="button" class="btn btn-outline-secondary" onclick="cancelImageUpload()">Cancel</button></div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add Item</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="container"> <!--body-->
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4 justify-content-center">
+                {% for message in get_flashed_messages() %}
+                <div class="mt-5 alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="btn-close" data-dismiss="alert"></button>
+                    {{message}}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <div class="row mt-5"> <!--search bar and button-->
+            <div class ="col-3"></div>
+            <div class="col-6 justify-content-center d-flex gap-2">
+                <div class="input-group">
+                    <input class="form-control shadow" type="text" id="search" placeholder="Search something...">
+                    <span class="input-group-text border-0" id="search-addon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
+                    </span>
+                </div>
+                
+                <button class="btn btn-primary shadow" id="addButton" onclick="openModal('overlay1','')">
+                    Add
+                </button>
+            </div>
+            <div class="col-3"></div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                $("#search").on("keyup",function () {
+                    var value = $(this).val().toLowerCase();
+                    $("#name tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            });
+        </script>
+        
+
+        <div class="row mt-5"> <!--table-->
+            <div class ="col-1"></div>
+            <div class ="col-10" id="searchResults">
+                <table id="resultsTable" class="table table-white table-hover shadow-lg border border-1">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Expiry Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="name">
+                        {%for i in range(0,len)%}
+
+                            <div class="modal shadow" id="{{data[i][0]}}"> <!--add item modal-->
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header d-flex justify-content-center">
+                                            <div class="fs-3">{{data[i][1]}}</div>
+                                            <button id="close-btn" title="Close" onclick="closeModal('{{data[i][0]}}')"><i class="fa fa-times"></i></button>
+                                        </div>
+                                        <div class="modal-body container">
+
+                                            <div class="row justify-content-center">
+                                                <img class="mb-3 rounded" src="{{ url_for('static',filename=showPic(data[i][5],data[i][0]))}}" alt="{{data[i][1]}}" width="320px" height="240px">
+                                            </div>
+
+                                            <form>
+                                                <div class="row">
+                                                
+                                                    <div class="col">
+                                                        <label for="foodName">Name</label>
+                                                        <input type="text" class="form-control mb-3" value="{{data[i][1]}}" name="foodName" required>
+                                                    </div>
+    
+                                                    <div class="col">
+                                                        <label for="foodQauntity">Quantity</label>
+                                                        <input type="number" class="form-control mb-3" value="{{data[i][2]}}" name="foodQauntity" required>
+                                                    </div>
+                                                    
+                                                </div>
+    
+                                                <div class="row">
+    
+                                                    <div class="col">
+                                                        <label for="foodExpDate">Expiry Date</label>
+                                                        <input type="date" class="form-control mb-3" value="{{date_filter(data[i][3])}}" name="foodExpDate" required>
+                                                    </div>
+    
+                                                    <div class="col">
+                                                        <label for="foodAddDate">Date Added</label>
+                                                        <input type="date" class="form-control mb-3" value="{{date_filter(data[i][4])}}" name="foodAddDate" disabled required>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </form>
+                                                
+                                        </div>
+
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Do you really want to delete this data?');">Delete</button>
+                                            <button type="submit" class="btn btn-primary">Save Change</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <tr class="{{'table-secondary' if date_filter(data[i][3]) < tdy else 'table-warning' if  date_filter(data[i][3]) < dateCheck else ''}}" onclick="openModal('{{data[i][0]}}','{{data[i][1]}}')">
+                                <th scope="row">{{i+1}}</th>
+                                <td>{{data[i][1]}}</td>
+                                <td>{{data[i][2]}}</td>
+                                <td>{{data[i][3]}}</td>
+                            </tr>
+
+                            
+                        {%endfor%}
+                    </tbody>
+                    
+                </table>
+            </div>
+            <div class ="col-1"></div>
+        </div>
+        
+    </div>
+    
+    <footer class="p-3 border-top border-3 shadow-lg mt-auto d-flex justify-content-center bg-white">
+        ©2024 by Teoh Hooi Chia, Lim Chee Yee, Tan Xing Yee & Nicol Heng Si Yi from Jiak Peng (KMPP)
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+    
+</body>
+</html>
