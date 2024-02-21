@@ -101,7 +101,7 @@ def runVoice():
 
     else:
         voice.speak("I didn't understand that command. Please try again.")
-    play(AudioSegment.from_wav("sound/siri_exit.wav"))
+    play(AudioSegment.from_wav("voice com/sound/siri_exit.wav"))
     voice.flag = False
 
 def main():
@@ -110,7 +110,7 @@ def main():
         text = voice.convert_voice_to_text(audio)
 
         if text.count(wake_word)>0:
-            play(AudioSegment.from_wav("sound/siri_activate.wav"))
+            play(AudioSegment.from_wav("voice com/sound/siri_activate.wav"))
             voice.speak("Hi, How can I help you?")
             voice.flag = True
             runVoice()

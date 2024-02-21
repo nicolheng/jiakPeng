@@ -15,7 +15,7 @@ def convertToBinaryData(filename):
 def takePic():
     try:
         voice.speak("Taking photo. Please place the food in the front of the camera")
-        cam = cv2.VideoCapture(1)
+        cam = cv2.VideoCapture(0)
         image = cam.read()
 
         cv2.imwrite("temp.png",image)
@@ -134,11 +134,6 @@ def askQuantity():
             quantity = eval(quantity)
         voice.speak("Alright")
         return quantity
-
-        """except:
-            print("convert prob")
-            voice.speak("an error occured")
-            return False"""
         
     else:
         print("sst prob")

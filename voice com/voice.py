@@ -17,9 +17,10 @@ def speak(audio):
 
 def capture_voice_input ():
     with sr.Microphone() as source:
+        recognizer.energy_threshold = 500
         print("Listening...")
-        recognizer.adjust_for_ambient_noise(source)
         audio = recognizer.listen(source)
+        print("")
     return audio
 
 def convert_voice_to_text (audio):
@@ -34,5 +35,5 @@ def convert_voice_to_text (audio):
         print("Error; {0}".format(e))
     finally:
         if flag == True:
-            play(AudioSegment.from_wav("sound/siri_reactivate.wav"))
+            play(AudioSegment.from_wav("voice com/sound/siri_reactivate.wav"))
     return text

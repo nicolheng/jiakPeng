@@ -1,8 +1,7 @@
 from flask import *
 import sqlite3
-import cv2
 import datetime
-import numpy as np
+from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
     
@@ -80,10 +79,17 @@ def action(id):
         flash(name+" is modified successfully")
     return redirect('/')
 
+@app.errorhandler(HTTPException)
+def goBack(e):
+    code = e.code
+    name = e.name
+    print(code,name)
+    return redirect('/')
+
 
   
 if __name__ == '__main__': 
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
 
-    app.run(debug = True) 
+    app.run(debug = True)
