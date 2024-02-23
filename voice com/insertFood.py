@@ -5,7 +5,7 @@ import cv2
 months = ["january", "february", "march", "april", "may", "june","july", "august", "september","october", "november", "december"]
 days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 dayExt = ["rd", "th", "st", "nd"]
-number = {'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10}
+number = {'one':1,'two':2,'three':3,'tree':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10}
 
 def convertToBinaryData(filename):
     with open(filename, 'rb') as file:
@@ -13,21 +13,21 @@ def convertToBinaryData(filename):
     return blobData
 
 def takePic():
-    try:
-        voice.speak("Taking photo. Please place the food in the front of the camera")
-        cam = cv2.VideoCapture(0)
-        image = cam.read()
+    voice.speak("Taking photo. Please place the food in the front of the camera")
+    cam = cv2.VideoCapture(0)
+    result, image = cam.read()
 
-        cv2.imwrite("temp.png",image)
+    cv2.imwrite("voice com/temp.jpg",image)
+    if result:
         print("photo success")
-        image = convertToBinaryData("temp.jpg")
+        image = convertToBinaryData("voice com/temp.jpg")
         voice.speak("Photo is taken")
         return image
-    
-    except:
+    else:
         print("camera problem occur")
         voice.speak("An error occured")
         return False
+    
     
 def askName():
     voice.speak("What's the name of the food?")
@@ -127,15 +127,13 @@ def askQuantity():
     audio = voice.capture_voice_input()
     quantity = voice.convert_voice_to_text(audio)
     
-    if quantity != "":
+    try:
         if quantity in number.keys():
             quantity = number[quantity]
         else:
             quantity = eval(quantity)
         voice.speak("Alright")
         return quantity
-        
-    else:
-        print("sst prob")
+    except:
         voice.speak("an error occured")
         return False

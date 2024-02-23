@@ -63,12 +63,12 @@ def insertFood():
     cur.execute("INSERT INTO DIRECTORY (foodName, foodExpDate, foodPhoto, foodQuantity, foodAddDate) VALUES(?,?,?,?,?)",(name,date,image,quantity,today))
     con.commit()
     voice.speak("Insert success. You can check the record in our web app")
-    remove("temp.png")
+    remove("voice com/temp.jpg")
 
 def expDate():
     #sql select, process into human form language, return result
     today = datetime.date.today()
-    end = today + datetime.timedelta(days=7)
+    end = today + datetime.timedelta(days=6)
     print(today,end)
 
     foodList = cur.execute("""SELECT foodQuantity, foodName, foodExpDate FROM DIRECTORY 
@@ -93,11 +93,14 @@ def runVoice():
     audio = voice.capture_voice_input()
     text = voice.convert_voice_to_text(audio)
 
-    if ("expire" or "expiring") in text.lower(): #expiring food
+    if ("expire" in text.lower()) or ("expiring" in text.lower()) or ("expiry" in text.lower()): #expiring food
         expDate()
 
-    elif ("insert" or "key in") in text.lower(): #insert new food
+    elif ("insert" in text.lower()) or ("key in" in text.lower()) or ("add" in text.lower()): #insert new food
         insertFood()
+
+    elif text == "are you a girl or a boy":
+        voice.speak("No! I'm a fridge")
 
     else:
         voice.speak("I didn't understand that command. Please try again.")
