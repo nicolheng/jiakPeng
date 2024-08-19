@@ -14,7 +14,7 @@ def convertToBinaryData(filename):
 
 def takePic():
     voice.speak("Taking photo. Please place the food in the front of the camera")
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture(1)
     result, image = cam.read()
 
     cv2.imwrite("voice com/temp.jpg",image)

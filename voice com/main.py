@@ -12,7 +12,7 @@ try:
 except sqlite3.Error as error:
     print("Error for database", error)
 
-wake_word = "hello fridge"
+wake_word = "hello fridge" 
 today = datetime.date.today()
 month = {"01":"January", "02":"February", "03":"March", "04":"April", "05":"May", "06":"June", "07":"July", "08":"August", "09":"September","10":"October", "11":"November", "12":"December"}
 
@@ -93,7 +93,7 @@ def runVoice():
     audio = voice.capture_voice_input()
     text = voice.convert_voice_to_text(audio)
 
-    if ("expire" in text.lower()) or ("expiring" in text.lower()) or ("expiry" in text.lower()): #expiring food
+    if ("expire" in text.lower()) or ("expiring" in text.lower()) or ("expiry" in text.lower()) or ("aspring" in text.lower()): #expiring food
         expDate()
 
     elif ("insert" in text.lower()) or ("key in" in text.lower()) or ("add" in text.lower()): #insert new food

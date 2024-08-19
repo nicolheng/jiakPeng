@@ -41,12 +41,6 @@ function addValidation(){
         alert("Please insert the expiry date.");
       return false;
     }
-    
-    var now = new Date();
-    if (x < now) {
-      alert("The expiry date cannot be in the past!")
-      return false;
-    }
 
   let y = document.forms["addItem"]["foodPhoto"].value;
     if (y == "") {
@@ -70,12 +64,6 @@ function modifyValidation(){
   let x = new Date(document.forms["modifyItem"]["foodExpDate"].value);
     if ( isNaN(x)) {
         alert("Please insert the expiry date.");
-      return false;
-    }
-    
-    var now = new Date();
-    if (x < now) {
-      alert("The expiry date cannot be in the past!")
       return false;
     }
 

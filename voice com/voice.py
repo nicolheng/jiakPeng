@@ -17,7 +17,7 @@ def speak(audio):
 
 def capture_voice_input ():
     with sr.Microphone() as source:
-        recognizer.energy_threshold = 300
+        recognizer.energy_threshold = 500
         print("Listening...")
         audio = recognizer.listen(source)
         print("")
